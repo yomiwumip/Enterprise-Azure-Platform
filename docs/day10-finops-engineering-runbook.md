@@ -411,3 +411,60 @@ The FinOps platform now demonstrates:
 - Operational troubleshooting
 
 The implementation intentionally records both successful outcomes and tooling limitations encountered during the exercise.
+
+---
+
+# 11. Portal vs Terraform vs Azure Comparison
+
+The temporary FinOps implementation created through the Azure Portal was compared with the existing Terraform-managed platform before making any Terraform changes.
+
+## Portal-created FinOps resource
+
+- Storage Account: `stcontosofinportal001`
+- Resource Group: `rg-contoso-finops-lab-uks-001`
+- SKU: `Standard_LRS`
+- Kind: `StorageV2`
+- Access tier: `Hot`
+- Public network access: `Disabled`
+- Private Endpoint: Present
+- Private DNS zone: Present
+- Lifecycle policy: Present
+- Cost Management budget/export configuration: Present
+
+## Existing Terraform-managed platform resource
+
+- Storage Account: `stcontosogovtf001`
+- Resource Group: `rg-contoso-platform-prod-uks-001`
+- SKU: `Standard_LRS`
+- Kind: `StorageV2`
+- Access tier: `Hot`
+- Public network access: `Enabled`
+- Private Endpoint: Not represented in the existing Terraform storage resource
+- Lifecycle management policy: Not represented in the existing Terraform configuration
+- Cost Management budget/export configuration: Not represented in the existing Terraform configuration
+
+## Terraform validation
+
+The existing Terraform state contained:
+
+- `azurerm_resource_group.platform`
+- `azurerm_management_lock.platform_resource_group`
+- `azurerm_storage_account.platform`
+
+Terraform was refreshed and a plan was executed.
+
+Result:
+
+`No changes. Your infrastructure matches the configuration.`
+
+This confirmed that the existing Terraform-managed platform was healthy and that the temporary Portal FinOps resources were not Terraform drift.
+
+## Engineering conclusion
+
+The Portal FinOps implementation and the existing Terraform platform are separate resources with different purposes.
+
+Terraform parity for the temporary FinOps implementation was therefore **not claimed as complete**.
+
+The comparison identified the next potential engineering step: recreate the required FinOps capabilities in Terraform, validate them, and then remove the temporary Portal implementation.
+
+This deliberate separation avoided importing or modifying an existing Terraform-managed resource without first establishing the correct ownership model.
