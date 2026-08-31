@@ -33,7 +33,7 @@ jobs:
         run: terraform -chdir=terraform fmt -check -recursive
 
       - name: Terraform Init
-        run: terraform -chdir=terraform init -backend=false
+        run: terraform -chdir=terraform init
 
       - name: Terraform Validate
         run: terraform -chdir=terraform validate
