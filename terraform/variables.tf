@@ -56,3 +56,15 @@ variable "application" {
   type        = string
   default     = "Platform"
 }
+
+variable "day15_test_user_password" {
+  description = "Temporary password for the Day 15 IAM test employee. Supply securely at Terraform execution time."
+  type        = string
+  sensitive   = true
+}
+
+variable "day15_bulk_test_user_password" {
+  description = "Temporary password for the Day 15 bulk IAM test employees. Supply securely at Terraform execution time."
+  type        = string
+  sensitive   = true
+}
