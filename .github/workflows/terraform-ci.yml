@@ -17,6 +17,14 @@ jobs:
         with:
           terraform_version: 1.15.9
 
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: fe2cf9f5-4c17-4ef5-83c2-b558fcef34c4
+          tenant-id: 59d35c79-722f-48ec-b8c5-03218a073cc4
+          subscription-id: eb1f07b2-12b1-417e-80d0-fe08c2376f5a
+          enable-AzPSSession: false
+
       - name: Terraform Format Check
         run: terraform -chdir=terraform fmt -check -recursive
 
