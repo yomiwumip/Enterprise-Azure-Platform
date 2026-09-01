@@ -3,6 +3,8 @@ name: Terraform CI
 on:
   pull_request:
   push:
+    branches:
+      - develop
 
 permissions:
   id-token: write
