@@ -9,7 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
+  plan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
 
     steps:
@@ -43,3 +44,46 @@ jobs:
           TF_VAR_day15_test_user_password: ${{ secrets.DAY15_TEST_USER_PASSWORD }}
           TF_VAR_day15_bulk_test_user_password: ${{ secrets.DAY15_BULK_TEST_USER_PASSWORD }}
         run: terraform -chdir=terraform plan -input=false -out=day15-cd.tfplan
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: day15-terraform-plan
+          path: terraform/day15-cd.tfplan
+          if-no-files-found: error
+
+  apply:
+    name: Terraform Apply
+    needs: plan
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.9
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: fe2cf9f5-4c17-4ef5-83c2-b558fcef34c4
+          tenant-id: 59d35c79-722f-48ec-b8c5-03218a073cc4
+          subscription-id: eb1f07b2-12b1-417e-80d0-fe08c2376f5a
+          enable-AzPSSession: false
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform init
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: day15-terraform-plan
+          path: terraform
+
+      - name: Terraform Apply
+        run: terraform -chdir=terraform apply -input=false day15-cd.tfplan
