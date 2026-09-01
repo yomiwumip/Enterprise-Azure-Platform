@@ -37,3 +37,9 @@ jobs:
 
       - name: Terraform Validate
         run: terraform -chdir=terraform validate
+
+      - name: Terraform Plan
+        env:
+          TF_VAR_day15_test_user_password: ${{ secrets.DAY15_TEST_USER_PASSWORD }}
+          TF_VAR_day15_bulk_test_user_password: ${{ secrets.DAY15_BULK_TEST_USER_PASSWORD }}
+        run: terraform -chdir=terraform plan -input=false -out=day15-cd.tfplan
