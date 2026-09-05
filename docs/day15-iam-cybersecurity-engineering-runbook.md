@@ -1,5 +1,5 @@
 # CONTOSO HOLDINGS — DAY 15
-# ENTERPRISE IAM CYBERSECURITY ENGINEERING RUNBOOK
+# Enterprise IAM: Entra ID, Azure RBAC and GitHub OIDC
 
 **Project:** Enterprise Azure Platform
 **Day:** 15
@@ -8,7 +8,7 @@
 **Environment:** Microsoft Azure / Microsoft Entra ID / GitHub Actions / Terraform
 **Repository:** Enterprise-Azure-Platform
 **Location:** Azure UK South
-**Document Type:** Production-Style Engineering Runbook
+**Document Type:** Engineering runbook and implementation record
 **Evidence Standard:** Verified implementation and session evidence only
 
 ---
@@ -250,7 +250,7 @@ This creates a separation between identity and authorization.
 
 ### 3.2 Group-Based Authorization
 
-Day 15 deliberately uses groups rather than assigning Azure RBAC directly to individual employees wherever possible.
+The design uses groups rather than assigning Azure RBAC directly to individual employees wherever possible.
 
 ```text
 User
@@ -275,13 +275,13 @@ Azure Reader
 Defined Azure Scope
 ```
 
-This provides a more manageable access model than assigning permissions individually.
+This is easier to change and audit than assigning the same permission directly to individual users.
 
 When an employee changes role, the organisation can change group membership rather than rebuilding multiple individual Azure RBAC assignments.
 
 When an employee leaves, access can be removed through the identity lifecycle process.
 
-This also makes access easier to audit.
+It also gives the access review process a clear group-to-role relationship.
 
 ### 3.3 Least Privilege
 
@@ -317,7 +317,7 @@ The second model reduces the blast radius if an identity is compromised.
 
 ---
 
-## 4. Day 15 Activity Tile
+## 4. Activity Tile — Build and Automate Enterprise IAM
 
 **Activity Tile:** Enterprise IAM Cybersecurity Engineering
 
@@ -336,7 +336,7 @@ Identity controls access to cloud resources and therefore directly affects secur
 Microsoft Azure, Microsoft Entra ID, GitHub Actions, Terraform and the Contoso Enterprise Azure Platform repository.
 
 **Time:**
-Day 15 hands-on engineering session.
+Day 15 hands-on implementation and troubleshooting session.
 
 **Risk / Cost:**
 Identity changes can affect access to Azure resources. Temporary identities and controlled test permissions were used during implementation. Production deployment access was protected through GitHub Environment approval and OIDC-based authentication rather than a long-lived Azure client secret.
@@ -767,7 +767,7 @@ resource "azuread_group" "day15_iam_dev_test" {
 
 The group then became the principal used by the Azure RBAC assignment.
 
-This demonstrates the dependency chain:
+The dependency chain is:
 
 ```text
 Terraform
@@ -896,7 +896,7 @@ The project initially used local Terraform state.
 
 This was acceptable for the early learning stages but is not the preferred production operating model for collaborative CI/CD.
 
-A production-style team needs shared state with:
+The CI/CD workflow needs shared Terraform state with:
 
 - controlled access;
 - locking;
@@ -951,7 +951,7 @@ The required role was:
 
 This is distinct from ordinary Azure management-plane access.
 
-The lesson is:
+The practical takeaway is:
 
 > Management-plane permissions do not automatically provide Blob data-plane permissions.
 
@@ -1735,7 +1735,7 @@ This provides traceability between:
 
 ---
 
-## 29. Portfolio Evidence
+## 29. Portfolio Evidence — What I Actually Did
 
 ### Situation
 
@@ -1777,7 +1777,7 @@ Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
 
 ---
 
-## 30. Manager / Recruiter Interview Questions
+## 30. Interview Questions and Answers
 
 ### 1. Why did you use Entra groups instead of assigning RBAC directly to users?
 
@@ -1908,7 +1908,7 @@ Any temporary elevated Azure permission introduced solely for controlled Day 15 
 
 ## 32. Verified Current State
 
-The following facts were verified during the Day 15 engineering session and subsequent closeout work:
+These values were checked during the Day 15 engineering session and subsequent closeout work:
 
 | Item | Verified Value |
 |---|---|
@@ -1981,7 +1981,7 @@ These remaining items are deliberately kept separate from the already-proven Day
 
 ## 34. What I Learned
 
-The most important Day 15 lesson was that IAM is an engineering system rather than simply a collection of Entra users.
+The main Day 15 takeaway was that IAM is not just creating users. The useful control is the chain from identity to authentication, authorization, scope and the resource being protected.
 
 The platform must connect:
 
@@ -2003,7 +2003,7 @@ Monitoring
 Incident Response
 ```
 
-The second major lesson was that workload identity deserves the same engineering discipline as human identity.
+The other important takeaway was workload identity. GitHub Actions needed its own trust boundary, just as a human identity does.
 
 GitHub Actions OIDC demonstrated that:
 
@@ -2065,7 +2065,7 @@ A future independent reproduction should follow this sequence:
 
 ## 36. Day 15 Portfolio Statement
 
-> During my enterprise cloud engineering residency, I implemented a production-style IAM and CI/CD control model using Microsoft Entra ID, Azure RBAC, Terraform and GitHub Actions.
+> During my enterprise cloud engineering residency, I implemented a production-oriented IAM and CI/CD control model using Microsoft Entra ID, Azure RBAC, Terraform and GitHub Actions.
 >
 > I designed group-based authorization, implemented a controlled 20-user onboarding canary using Terraform `for_each`, introduced workload identity through GitHub OIDC and protected production deployment with a GitHub Environment approval gate.
 >
@@ -2119,5 +2119,3 @@ The final operating model is:
 ```
 
 The Day 15 engineering objective was therefore achieved at the implementation level: identity, authorization, workload identity, Infrastructure as Code, remote state, CI/CD and production change control were connected into one operating model.
-
-Final cleanup and documentation delivery remain explicit operational closeout items and must not be represented as complete until actually performed.
